@@ -3,7 +3,7 @@ description: 'Report type check result on PR diff view.'
 author: 'andoshin11'
 runs:
   using: 'node12'
-  main: 'dist/index.js'
+  main: 'lib/index.js'
 branding:
   icon: 'check-circle'
   color: 'blue'
