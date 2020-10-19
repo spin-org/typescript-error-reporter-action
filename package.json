@@ -13,9 +13,9 @@
   },
   "homepage": "https://github.com/gozala/typescript-error-reporter-action#readme",
   "scripts": {
-    "build": "tsc",
+    "build": "npx @vercel/ncc build src/index.ts",
     "watch": "tsc -w",
-    "clean": "rm -rf lib",
+    "clean": "rm -rf lib && rm -rf dist",
     "test:type": "tsc --noEmit --incremental false"
   },
   "devDependencies": {
