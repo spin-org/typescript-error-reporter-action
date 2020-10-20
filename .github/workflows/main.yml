@@ -39,25 +39,4 @@ jobs:
         uses: ./
         with:
           project: projectFixtures/sub
-  publish:
-    name: Release
-    needs: test
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/default'
-    steps:
-    - uses: actions/checkout@v2
-    - name: Restore dependencies
-      id: cache-modules
-      uses: actions/cache@v1
-      with:
-        path: node_modules
-        key: 12.x-${{ runner.OS }}-build-${{ hashFiles('package.json') }}
-    - name: Install
-      if: steps.cache-modules.outputs.cache-hit != 'true'
-      run: yarn install
-    - name: Build
-      uses: tool3/ncc@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        src: 'src/index.ts'
-        branch: release
+  
