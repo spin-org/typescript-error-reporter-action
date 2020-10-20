@@ -1,10 +1,9 @@
 import Module from 'module'
 import * as path from 'path'
 import * as fs from 'fs'
-import { Diagnostic, DiagnosticCategory, textSpanContainsPosition } from 'typescript'
 import { getInput, setFailed } from '@actions/core'
 import { reporter } from './reporter'
-import type { CompilerOptions, ParsedCommandLine } from "typescript"
+import type { CompilerOptions, Diagnostic, ParsedCommandLine } from "typescript"
 
 type TS = typeof import('typescript')
 
