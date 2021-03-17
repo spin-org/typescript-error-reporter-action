@@ -42,7 +42,7 @@ export const parseLocation = (content:string, position:number) => {
   return { line: l, column: c };
 }
 
-export const uploadAnnotations = (diagnostics: Diagnostic[]) => {
+export const uploader = (ts: TS) => (diagnostics: Diagnostic[]) => {
   try {
     const repoToken = getInput('repo_token', { required: false })
     if (repoToken) {

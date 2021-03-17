@@ -2,7 +2,7 @@ import Module from 'module'
 import * as path from 'path'
 import * as fs from 'fs'
 import { getInput, setFailed } from '@actions/core'
-import { reporter, uploadAnnotations } from './reporter'
+import { reporter, uploadAnnotations, uploader } from './reporter'
 import { CompilerOptions, Diagnostic, ParsedCommandLine } from "typescript"
 
 type TS = typeof import('typescript')
@@ -78,6 +78,7 @@ const performIncrementalCompilation = (ts:TS, projectPath:string) => {
 
 const performCompilation = (ts: TS, config:ParsedCommandLine) => {
   const report = reporter(ts)
+  const upload = uploader(ts)
   const host = ts.createCompilerHost(config.options)
   const program = ts.createProgram({
     rootNames: config.fileNames,
@@ -101,7 +102,7 @@ const performCompilation = (ts: TS, config:ParsedCommandLine) => {
   }
   const diagnostics = ts.sortAndDeduplicateDiagnostics(all)
 
-  uploadAnnotations(diagnostics.slice())
+  upload(diagnostics.slice())
   diagnostics.forEach(diagnostic => report(diagnostic))
   return all.length
 }
