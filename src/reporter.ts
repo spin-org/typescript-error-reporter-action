@@ -85,6 +85,8 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
           status: 'completed',
           conclusion: 'success',
           output: {
+            title: "Update annotations title",
+            summary: "Update annotations summary",
             annotations
           }
         }).catch(err => {
