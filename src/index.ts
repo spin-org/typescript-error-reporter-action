@@ -2,7 +2,7 @@ import Module from 'module'
 import * as path from 'path'
 import * as fs from 'fs'
 import { getInput, setFailed } from '@actions/core'
-import { reporter, uploadAnnotations, uploader } from './reporter'
+import { reporter, uploader } from './reporter'
 import { CompilerOptions, Diagnostic, ParsedCommandLine } from "typescript"
 
 type TS = typeof import('typescript')
