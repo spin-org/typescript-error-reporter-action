@@ -1,5 +1,8 @@
-import type { Diagnostic } from 'typescript'
+import { Diagnostic, DiagnosticCategory } from 'typescript'
 import { issueCommand } from '@actions/core/lib/command'
+import { getOctokit, context } from '@actions/github'
+import { getInput } from '@actions/core'
+
 type TS = typeof import('typescript')
 
 export const reporter = (ts:TS) => (diagnostic:Diagnostic) => {
@@ -37,4 +40,74 @@ export const parseLocation = (content:string, position:number) => {
   }
 
   return { line: l, column: c };
+}
+
+export const uploadAnnotations = (diagnostics: Diagnostic[]) => {
+  try {
+    const repoToken = getInput('repo_token', { required: false })
+    if (repoToken) {
+      const octokit = getOctokit(repoToken)
+      const pullRequest = context.payload.pull_request
+      let ref
+      if (pullRequest) {
+        ref = pullRequest.head.sha
+      } else {
+        ref = context.sha
+      }
+      const owner = context.repo.owner
+      const repo = context.repo.repo
+
+      // The GitHub API requires that annotations are submitted in batches of 50 elements maximum
+      const batchedAnnotations = batch(50, diagnostics)
+      for (const batch of batchedAnnotations) {
+        const annotations = batch.map(diagnostic => {
+          return {
+            path: diagnostic.file,
+            start_line: diagnostic.start,
+            end_line: diagnostic.start,
+            annotation_level: getAnnotationLevel(diagnostic),
+            message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
+          }
+        })
+
+        octokit.checks.update({
+          owner,
+          repo,
+          check_run_id: context.runId,
+          output: {
+            annotations
+          }
+        }).catch(err => {
+          console.log("upload fetch err", err)
+        })
+      }
+    }
+  } catch (error) {
+    console.log("error uploading annotations", error)
+  }
+}
+
+function batch<T>(size: number, inputs: T[]) {
+  return inputs.reduce((batches, input) => {
+    const current = batches[batches.length - 1]
+
+    current.push(input)
+
+    if (current.length === size) {
+      batches.push([])
+    }
+
+    return batches
+  }, [[]] as T[][])
+}
+
+const getAnnotationLevel = (diagnostic: Diagnostic) => {
+  switch (diagnostic.category) {
+    case DiagnosticCategory.Error:
+      return "failure"
+    case DiagnosticCategory.Warning:
+      return "warning"
+    default:
+      return "notice"
+  }
 }
