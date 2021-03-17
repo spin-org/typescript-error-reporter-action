@@ -62,7 +62,7 @@ export const uploader = (ts: TS) => (diagnostics: Diagnostic[]) => {
       for (const batch of batchedAnnotations) {
         const annotations = batch.map(diagnostic => {
           return {
-            path: diagnostic.file,
+            path: diagnostic.file?.fileName,
             start_line: diagnostic.start,
             end_line: diagnostic.start,
             annotation_level: getAnnotationLevel(diagnostic),
