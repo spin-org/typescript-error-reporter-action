@@ -42,7 +42,7 @@ export const parseLocation = (content:string, position:number) => {
   return { line: l, column: c };
 }
 
-export const uploader = (ts: TS) => (diagnostics: Diagnostic[]) => {
+export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
   try {
     const repoToken = getInput('repo_token', { required: false })
     if (repoToken) {
@@ -56,6 +56,14 @@ export const uploader = (ts: TS) => (diagnostics: Diagnostic[]) => {
       }
       const owner = context.repo.owner
       const repo = context.repo.repo
+
+      const { data: { id: checkRunId } } = await octokit.checks.create({
+        owner,
+        repo,
+        name: "Update annotations",
+        head_sha: ref,
+        status: 'in_progress'
+      })
 
       // The GitHub API requires that annotations are submitted in batches of 50 elements maximum
       const batchedAnnotations = batch(50, diagnostics)
@@ -73,7 +81,9 @@ export const uploader = (ts: TS) => (diagnostics: Diagnostic[]) => {
         octokit.checks.update({
           owner,
           repo,
-          check_run_id: context.runId,
+          check_run_id: checkRunId,
+          status: 'completed',
+          conclusion: 'success',
           output: {
             annotations
           }
