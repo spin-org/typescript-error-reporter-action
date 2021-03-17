@@ -126,7 +126,7 @@ const performCompilation = (ts: TS, config:ParsedCommandLine) => {
             start_line: diagnostic.start,
             end_line: diagnostic.start,
             annotation_level: getAnnotationLevel(diagnostic),
-            message: diagnostic.messageText,
+            message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
           }
         })
   
@@ -137,6 +137,8 @@ const performCompilation = (ts: TS, config:ParsedCommandLine) => {
           output: {
             annotations
           }
+        }).catch(err => {
+          console.log("upload fetch err", err)
         })
       }
     }
