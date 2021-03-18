@@ -8,10 +8,10 @@ type TS = typeof import('typescript')
 export const reporter = (ts:TS) => (diagnostic:Diagnostic) => {
   switch (diagnostic.category) {
     case ts.DiagnosticCategory.Error: {
-      return issueCommand('error', readProperties(diagnostic), ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'))
+      // return issueCommand('error', readProperties(diagnostic), ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'))
     }
     case ts.DiagnosticCategory.Warning: {
-      return issueCommand('warning', readProperties(diagnostic), ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'))
+      // return issueCommand('warning', readProperties(diagnostic), ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'))
     }
   }
 }
