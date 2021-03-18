@@ -92,8 +92,6 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
             summary:`Found ${diagnostics.length} TypeScript errors`,
             annotations,
           }
-        }).then(value => {
-          console.log('completed upload', value)
         }).catch(err => {
           console.log("upload fetch err", err)
         })
