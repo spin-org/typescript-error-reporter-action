@@ -69,10 +69,11 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
       const batchedAnnotations = batch(50, diagnostics)
       for (const batch of batchedAnnotations) {
         const annotations = batch.map(diagnostic => {
+          const { line, file } = readProperties(diagnostic)
           return {
-            path: diagnostic.file ? diagnostic.file.fileName : '',
-            start_line: diagnostic.start,
-            end_line: diagnostic.start,
+            path: file || '',
+            start_line: line,
+            end_line: line,
             annotation_level: getAnnotationLevel(diagnostic),
             message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
           }
