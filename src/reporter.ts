@@ -42,6 +42,9 @@ export const parseLocation = (content:string, position:number) => {
   return { line: l, column: c };
 }
 
+// conbined code from 
+// https://github.com/tangro/actions-test/blob/3aa079b6cbd9e6f26a6e4516e6ca5b73c3f6f7ac/src/test/checkRun.ts#L76-L93
+// https://github.com/Attest/annotations-action/blob/0b9e2f246879c10ddf456fea5195a7ada1a9aa2b/src/github.ts#L65-L89
 export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
   try {
     const repoToken = getInput('repo_token', { required: false })
