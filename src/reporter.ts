@@ -72,8 +72,8 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
           const { line, file } = readProperties(diagnostic)
           return {
             path: file || '',
-            start_line: line,
-            end_line: line,
+            start_line: Number(line),
+            end_line: Number(line),
             annotation_level: getAnnotationLevel(diagnostic),
             message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
           }
