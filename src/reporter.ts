@@ -59,7 +59,7 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
       const { data: { id: checkRunId } } = await octokit.checks.create({
         owner,
         repo,
-        name: "Update annotations",
+        name: "Update TypeScript error annotations",
         head_sha: ref,
         status: 'in_progress'
       })
@@ -88,8 +88,8 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
           status: 'completed',
           conclusion: 'success',
           output: {
-            title: "Update annotations title",
-            summary: "Update annotations summary",
+            title: "TypeScript errors",
+            summary:`Found ${diagnostics.length} TypeScript errors`,
             annotations,
           }
         }).then(value => {
