@@ -78,6 +78,8 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
           }
         })
 
+        console.log("uploading", annotations)
+
         octokit.checks.update({
           owner,
           repo,
@@ -89,6 +91,8 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
             summary: "Update annotations summary",
             annotations
           }
+        }).then(value => {
+          console.log('completed upload', value)
         }).catch(err => {
           console.log("upload fetch err", err)
         })
