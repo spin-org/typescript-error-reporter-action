@@ -3,6 +3,7 @@ import { issueCommand } from '@actions/core/lib/command'
 import { getOctokit, context } from '@actions/github'
 import { getInput } from '@actions/core'
 
+
 type TS = typeof import('typescript')
 
 export const reporter = (ts:TS) => (diagnostic:Diagnostic) => {
@@ -59,6 +60,7 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
       }
       const { owner, repo } = context.repo
 
+      // github docs: https://docs.github.com/en/rest/reference/checks#update-a-check-run
       const { data: { id: checkRunId } } = await octokit.checks.create({
         owner,
         repo,
