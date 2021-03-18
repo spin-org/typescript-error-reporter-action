@@ -54,8 +54,7 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
       } else {
         ref = context.sha
       }
-      const owner = context.repo.owner
-      const repo = context.repo.repo
+      const { owner, repo } = context.repo
 
       const { data: { id: checkRunId } } = await octokit.checks.create({
         owner,
@@ -69,17 +68,18 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
       const batchedAnnotations = batch(50, diagnostics)
       for (const batch of batchedAnnotations) {
         const annotations = batch.map(diagnostic => {
-          const { line, file } = readProperties(diagnostic)
+          const { line, file = "" } = readProperties(diagnostic)
           return {
-            path: file || '',
+            path: file.replace(
+              `${process.env.RUNNER_WORKSPACE as string}/${repo}/`,
+              ''
+            ),
             start_line: Number(line),
             end_line: Number(line),
             annotation_level: getAnnotationLevel(diagnostic),
             message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
           }
         })
-
-        console.log("uploading", annotations)
 
         octokit.checks.update({
           owner,
@@ -90,7 +90,7 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
           output: {
             title: "Update annotations title",
             summary: "Update annotations summary",
-            annotations: annotations.slice(0, 2), // REMOVE
+            annotations,
           }
         }).then(value => {
           console.log('completed upload', value)
