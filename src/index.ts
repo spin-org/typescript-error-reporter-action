@@ -77,7 +77,6 @@ const performIncrementalCompilation = (ts:TS, projectPath:string) => {
 
 
 const performCompilation = (ts: TS, config:ParsedCommandLine) => {
-  const report = reporter(ts)
   const upload = uploader(ts)
   const host = ts.createCompilerHost(config.options)
   const program = ts.createProgram({
@@ -103,7 +102,6 @@ const performCompilation = (ts: TS, config:ParsedCommandLine) => {
   const diagnostics = ts.sortAndDeduplicateDiagnostics(all)
 
   upload(diagnostics.slice())
-  diagnostics.forEach(diagnostic => report(diagnostic))
   return all.length
 }
 
