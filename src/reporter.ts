@@ -90,7 +90,7 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
           output: {
             title: "Update annotations title",
             summary: "Update annotations summary",
-            annotations
+            annotations: annotations.slice(0, 2), // REMOVE
           }
         }).then(value => {
           console.log('completed upload', value)
