@@ -14,4 +14,7 @@ inputs:
   error_fail_threshold:
     description: 'Optional number of errors threshold at which this step fails.'
     required: false
+  repo_token:
+    description: 'Token to upload annotations to github api. Otherwise will max out at 10 error and 10 warning annotations'
+    required: false
   
