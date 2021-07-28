@@ -101,17 +101,27 @@ const performCompilation = (ts: TS, config:ParsedCommandLine) => {
   const diagnostics = ts.sortAndDeduplicateDiagnostics(all)
 
   diagnostics.forEach(d => {
-    const file = d.file?.fileName || "<unknown file>"
+    if (!d.file) {
+      // not very useful without file/line info
+      return
+    }
+
+    const file = d.file.fileName || "<unknown file>"
     const start = d.start || 0
     const end = start + (d.length || 0)
-    const line = d.file?.getLineAndCharacterOfPosition(start)
-    const message = (d.messageText as DiagnosticMessageChain) ? 
-      (d.messageText as DiagnosticMessageChain).messageText :
-      d.messageText
-    d.relatedInformation?.forEach(r => {
+    const line = d.file.getLineAndCharacterOfPosition(start)
+
+    let message: string = ""
+    if (d.messageText as DiagnosticMessageChain) {
+      message = (d.messageText as DiagnosticMessageChain).messageText
+    } else {
+      message = (d.messageText as string)
+    }
+
+    (d.relatedInformation || []).forEach(r => {
       console.warn("Related: ", r.messageText)
     })
-    console.warn(`${file}:${line?.line || 0}:${line?.character || 0}\n${message}`)
+    console.warn(`${file}:${line.line || 0}:${line.character || 0}\n${message}`)
   })
 
   upload(diagnostics.slice())
