@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as fs from 'fs'
 import { getInput, setFailed } from '@actions/core'
 import { reporter, uploader } from './reporter'
-import { CompilerOptions, Diagnostic, ParsedCommandLine } from "typescript"
+import ts, { CompilerOptions, Diagnostic, DiagnosticMessageChain, ParsedCommandLine } from "typescript"
 
 type TS = typeof import('typescript')
 
@@ -55,7 +55,6 @@ const typecheck = (projectPath:string) => {
     ? performIncrementalCompilation(ts, projectPath)
     : performCompilation(ts, config)
 
-  
   const errThreshold = Number(getInput('error_fail_threshold') || 0)
   const logString = `Found ${errors} errors!`
   console.log(logString)
@@ -100,6 +99,20 @@ const performCompilation = (ts: TS, config:ParsedCommandLine) => {
     }
   }
   const diagnostics = ts.sortAndDeduplicateDiagnostics(all)
+
+  diagnostics.forEach(d => {
+    const file = d.file?.fileName || "<unknown file>"
+    const start = d.start || 0
+    const end = start + (d.length || 0)
+    const line = d.file?.getLineAndCharacterOfPosition(start)
+    const message = (d.messageText as DiagnosticMessageChain) ? 
+      (d.messageText as DiagnosticMessageChain).messageText :
+      d.messageText
+    d.relatedInformation?.forEach(r => {
+      console.warn("Related: ", r.messageText)
+    })
+    console.warn(`${file}:${line?.line || 0}:${line?.character || 0}\n${message}`)
+  })
 
   upload(diagnostics.slice())
   return all.length
