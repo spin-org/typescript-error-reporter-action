@@ -13,7 +13,7 @@ This action uses the [TypeScript Compiler API](https://github.com/microsoft/Type
 ```yaml
 name: Test
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   test:
@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Typecheck
-        uses: computerjazz/typescript-error-reporter-action@v1.0.9
+        uses: computerjazz/typescript-error-reporter-action@v1.0.11
 ```
 
 `tsconfig.json`:
@@ -58,7 +58,7 @@ path to the repo itself:
 
 ```yaml
 - name: Typecheck
-  uses: computerjazz/typescript-error-reporter-action@v1.0.9
+  uses: computerjazz/typescript-error-reporter-action@v1.0.11
   with:
     project: packages/subpackage/tsconfig.json
 ```
@@ -68,7 +68,19 @@ If you're incrementally adopting typescript in a project, you may not want to fa
 
 ```yaml
 - name: Typecheck
-  uses: computerjazz/typescript-error-reporter-action@v1.0.9
+  uses: computerjazz/typescript-error-reporter-action@v1.0.11
   with:
     error_fail_threshold: 100
+```
+
+## passing `repo_token` parameter
+
+In order to bypass the maximum of 10 pull request annotations that a GitHub action can post, this action uploads all annotations in separate, batched api calls, which requires an API token:
+
+```yaml
+- name: Typecheck
+  uses: computerjazz/typescript-error-reporter-action@v1.0.11
+  with:
+    error_fail_threshold: 100
+    repo_token: "${{ secrets.GITHUB_TOKEN }}"
 ```

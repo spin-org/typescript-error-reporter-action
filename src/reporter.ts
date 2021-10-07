@@ -79,8 +79,8 @@ export const uploader = (ts: TS) => async (diagnostics: Diagnostic[]) => {
               `${process.env.RUNNER_WORKSPACE as string}/${repo}/`,
               ''
             ),
-            start_line: Number(line),
-            end_line: Number(line),
+            start_line: Number(line || 1),
+            end_line: Number(line || 1),
             annotation_level: getAnnotationLevel(diagnostic),
             message: ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
           }
