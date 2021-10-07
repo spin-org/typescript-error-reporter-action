@@ -13,7 +13,7 @@ This action uses the [TypeScript Compiler API](https://github.com/microsoft/Type
 ```yaml
 name: Test
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   test:
@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
       - name: Typecheck
-        uses: computerjazz/typescript-error-reporter-action@v1.0.9
+        uses: computerjazz/typescript-error-reporter-action@v1.0.11
 ```
 
 `tsconfig.json`:
